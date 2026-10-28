@@ -1,0 +1,12 @@
+name: chemprop
+channels:
+  - conda-forge
+dependencies:
+  - scikit-learn
+  - numpy
+  - jupyter
+  - pandas
+  - python=3.12
+  - matplotlib
+  - rdkit
+prefix: /home/nrahman/miniforge3/envs/chemprop
