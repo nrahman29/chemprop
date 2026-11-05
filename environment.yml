@@ -2,11 +2,15 @@ name: chemprop
 channels:
   - conda-forge
 dependencies:
-  - scikit-learn
-  - numpy
-  - jupyter
-  - pandas
   - python=3.12
-  - matplotlib
   - rdkit
+  - pandas
+  - numpy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - joblib
+  - streamlit
+  - jupyter
+  - ipykernel
 prefix: /home/nrahman/miniforge3/envs/chemprop
