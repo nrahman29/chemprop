@@ -2,7 +2,7 @@
 
 ChemProp is a cheminformatics and machine-learning project for predicting aqueous molecular solubility from chemical structures.
 
-The project combines RDKit molecular descriptors with machine-learning models to estimate experimentally measured aqueous solubility (logS, mol/L) from SMILES representations.
+The project combines RDKit molecular descriptors with machine-learning models to estimate experimentally measured aqueous solubility (logS, log₁₀ mol/L) from SMILES representations.
 
 It includes an exploratory Jupyter notebook, a reproducible model-training pipeline, and an interactive Streamlit application.
 
@@ -22,6 +22,7 @@ It includes an exploratory Jupyter notebook, a reproducible model-training pipel
 - Linear Regression and Random Forest models
 - Molecular descriptor and permutation importance analysis
 - Random train/test and scaffold-based cross-validation
+- Morgan molecular fingerprint evaluation
 - Interactive solubility prediction from SMILES
 - Molecular structure visualisation
 - Reproducible environment and model training
@@ -30,7 +31,7 @@ It includes an exploratory Jupyter notebook, a reproducible model-training pipel
 
 The project uses the [Delaney ESOL dataset](https://doi.org/10.1021/ci034243x), containing 1,128 molecules with experimentally measured aqueous solubilities.
 
-**Target:** measured logS (log10 mol/L)
+**Target:** measured logS (log₁₀ mol/L)
 
 ## Methodology
 
@@ -59,7 +60,9 @@ The following models and validation approaches were investigated:
 
 ### Random train/test split
 
-An 80/20 split with `random_state=42` was used for initial model evaluation.
+An 80/20 split with `random_state=42` was used for initial internal model evaluation.
+
+MAE and RMSE are reported in logS units (log₁₀ mol/L).
 
 | Model | MAE | RMSE | R² |
 |---|---:|---:|---:|
@@ -78,13 +81,23 @@ Murcko scaffolds were used to group molecules according to their core molecular 
 | RMSE | 0.842 | 0.080 |
 | R² | 0.802 | 0.055 |
 
-The scaffold-based evaluation provides a more demanding assessment of structural generalisation than a conventional random split.
+This evaluation provides a more demanding assessment of structural generalisation than a conventional random split.
+
+The random-split and scaffold-based results come from different validation protocols and should not be interpreted as a direct like-for-like comparison. The random split is an internal development benchmark, not independent external validation.
 
 ### Feature importance
 
 Permutation importance identified LogP as the dominant predictive descriptor, followed by molecular weight and TPSA.
 
+![Permutation feature importance](screenshots/permutation_importance.png)
+
 Morgan fingerprints were also investigated, both independently and in combination with molecular descriptors. Combining fingerprints with the seven descriptors did not produce a meaningful improvement in cross-validation performance.
+
+Additional analysis:
+
+![Molecular descriptor feature importance](screenshots/feature_importance.png)
+
+![Scaffold-based cross-validation analysis](screenshots/scaffold_validation.png)
 
 ## Interactive Application
 
@@ -130,6 +143,8 @@ Launch the application:
 python -m streamlit run app.py
 ```
 
+The training script evaluates an initial random train/test split and then retrains the deployment model using the complete dataset.
+
 ## Project Structure
 
 ```text
@@ -140,14 +155,20 @@ chemprop/
 ├── data/
 │   └── delaney-processed.csv
 ├── models/
-│   └── esol_random_forest.joblib
+│   └── esol_random_forest.joblib  (generated locally)
 ├── notebooks/
 │   └── 01_esol_exploration.ipynb
+├── screenshots/
+│   ├── aspirin.png
+│   ├── ethanol.png
+│   ├── feature_importance.png
+│   ├── permutation_importance.png
+│   └── scaffold_validation.png
 ├── README.md
 └── .gitignore
 ```
 
-The trained model is generated locally by `train_model.py` and is not required to be stored in version control.
+The trained model is generated locally by `train_model.py` and is not stored in version control.
 
 ## Limitations
 
